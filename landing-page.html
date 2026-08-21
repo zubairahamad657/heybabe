@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7ff;
+            color: #222;
+        }
+
+        /* Navbar */
+        nav {
+            height: 70px;
+            padding: 0 8%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #111827;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: .3s;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .btn {
+            background: #2563eb;
+            padding: 12px 22px;
+            border-radius: 6px;
+            transition: .3s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-3px);
+        }
+
+        /* Home */
+        .home {
+            min-height: 75vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .home h1 {
+            font-size: 55px;
+            margin-bottom: 20px;
+        }
+
+        .home h1 span {
+            color: #2563eb;
+        }
+
+        .home p {
+            max-width: 600px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* About */
+        .about {
+            padding: 70px 8%;
+            text-align: center;
+            background: white;
+        }
+
+        .about h2 {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .about > p {
+            color: #666;
+            margin-bottom: 35px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .card {
+            padding: 25px;
+            width: 30%;
+            background: #f5f7ff;
+            border-radius: 12px;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px #ddd;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Contact */
+        .contact {
+            padding: 70px 20px;
+            text-align: center;
+        }
+
+        .contact h2 {
+            margin-bottom: 15px;
+        }
+
+        .contact p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 20px;
+            text-align: center;
+            background: #111827;
+            color: white;
+        }
+
+        @media(max-width:700px) {
+            nav ul {
+                display: none;
+            }
+
+            .home h1 {
+                font-size: 40px;
+            }
+
+            .cards {
+                flex-direction: column;
+            }
+
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">NEXORA</div>
+
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <a href="#contact" class="btn">Get Started</a>
+    </nav>
+
+    <section class="home" id="home">
+        <div>
+            <h1>Build Your <span>Future</span></h1>
+            <p>
+                Create beautiful and modern websites
+                with simple, clean and powerful design.
+            </p>
+            <a href="#about" class="btn">Explore Now</a>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <h2>Why Choose Us?</h2>
+        <p>Everything you need to create a great website.</p>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Modern Design</h3>
+                <p>Clean and attractive designs for your website.</p>
+            </div>
+
+            <div class="card">
+                <h3>Fast Performance</h3>
+                <p>Fast loading and smooth user experience.</p>
+            </div>
+
+            <div class="card">
+                <h3>Responsive</h3>
+                <p>Works perfectly on mobile and desktop.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <h2>Ready to Start?</h2>
+        <p>Let's create something amazing together.</p>
+        <a href="mailto:hello@example.com" class="btn">Contact Us</a>
+    </section>
+
+    <footer>
+        © 2026 NEXORA | All Rights Reserved
+    </footer>
+
+</body>
+</html>

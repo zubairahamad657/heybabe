@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Div</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#0f172a;
+}
+
+.card{
+    position:relative;
+    width:350px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(20px);
+    overflow:hidden;
+    transition:.5s;
+    color:white;
+    text-align:center;
+    border:1px solid rgba(255,255,255,.2);
+    box-shadow:0 15px 40px rgba(0,0,0,.4);
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    background:linear-gradient(45deg,#00f5ff,#7b2ff7);
+    border-radius:50%;
+    top:-60px;
+    left:-60px;
+    filter:blur(30px);
+}
+
+.card::after{
+    content:"";
+    position:absolute;
+    width:150px;
+    height:150px;
+    background:linear-gradient(45deg,#ff512f,#dd2476);
+    border-radius:50%;
+    bottom:-60px;
+    right:-60px;
+    filter:blur(30px);
+}
+
+.card h1{
+    position:relative;
+    z-index:2;
+    font-size:35px;
+    margin-bottom:15px;
+}
+
+.card p{
+    position:relative;
+    z-index:2;
+    color:#ddd;
+    margin-bottom:25px;
+}
+
+.card button{
+    position:relative;
+    z-index:2;
+    padding:12px 30px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(90deg,#00f5ff,#7b2ff7);
+    color:white;
+    cursor:pointer;
+    transition:.4s;
+    font-size:16px;
+}
+
+.card button:hover{
+    transform:scale(1.1);
+    box-shadow:0 0 20px cyan;
+}
+
+.card:hover{
+    transform:translateY(-15px) scale(1.03);
+    box-shadow:0 25px 50px rgba(0,255,255,.3);
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+    <h1>WELCOME</h1>
+    <p>Advanced Glassmorphism Div with Hover Animation</p>
+    <button>Explore</button>
+</div>
+
+</body>
+</html>
