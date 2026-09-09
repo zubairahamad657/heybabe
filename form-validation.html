@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Validation</title>
+</head>
+
+<body>
+
+<form action="https://www.google.com" method="post" onsubmit="return validate_form();">
+
+    <label>Name :</label>
+    <input type="text" placeholder="Your Name here" id="name">
+    <br><br>
+
+    <label>Mobile Number :</label>
+    <input type="text" placeholder="XXXXXXXXXX" id="mobile">
+    <br><br>
+
+    <label>Age :</label>
+    <input type="text" placeholder="Your Age here" id="age">
+    <br><br>
+
+    <label>Select City :</label>
+    <select id="city">
+        <option value="">Select City</option>
+        <option value="Mumbai">Mumbai</option>
+        <option value="Pune">Pune</option>
+        <option value="Jaipur">Jaipur</option>
+        <option value="Chennai">Chennai</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Submit</button>
+
+</form>
+
+
+<script>
+
+function validate_form() {
+
+    let name = document.getElementById("name").value;
+    let mobileNumber = document.getElementById("mobile").value;
+    let age = document.getElementById("age").value;
+    let city = document.getElementById("city").value;
+
+
+    // Name Validation
+    if (name == "") {
+        alert("Please enter your name");
+        return false;
+    }
+
+
+    // Mobile Number Validation
+    if (mobileNumber == "") {
+        alert("Please enter mobile number");
+        return false;
+    }
+
+    if (isNaN(mobileNumber)) {
+        alert("Mobile number should contain only numbers");
+        return false;
+    }
+
+    if (mobileNumber.length != 10) {
+        alert("Mobile number must be 10 digits");
+        return false;
+    }
+
+
+    // Age Validation
+    if (age == "") {
+        alert("Please enter your age");
+        return false;
+    }
+
+    if (isNaN(age)) {
+        alert("Age should contain only numbers");
+        return false;
+    }
+
+    if (age < 1 || age > 100) {
+        alert("Please enter a valid age between 1 and 100");
+        return false;
+    }
+
+
+    // City Validation
+    if (city == "") {
+        alert("Please select your city");
+        return false;
+    }
+
+
+    alert("Form submitted successfully");
+
+    return true;
+}
+
+</script>
+
+</body>
+</html>

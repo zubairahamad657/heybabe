@@ -1,0 +1,103 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Selector</title>
+
+    <style>
+        #sample {
+            width: 200px;
+            height: 100px;
+            border: 2px solid black;
+            margin-top: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 60px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- RED -->
+    <label>RED</label>
+    <select id="redColor">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+
+    <br><br>
+
+    <!-- GREEN -->
+    <label>GREEN</label>
+    <select id="greenColor">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+
+    <br><br>
+
+    <!-- BLUE -->
+    <label>BLUE</label>
+    <select id="blueColor">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+
+    <br><br>
+
+    <div id="sample"></div>
+
+    <script>
+
+        let red = document.getElementById("redColor");
+        let green = document.getElementById("greenColor");
+        let blue = document.getElementById("blueColor");
+
+        function changeColor() {
+
+            document.getElementById("sample").style.backgroundColor =
+                "rgb(" +
+                red.value * 25 + ", " +
+                green.value * 25 + ", " +
+                blue.value * 25 +
+                ")";
+        }
+
+        red.addEventListener("change", changeColor);
+        green.addEventListener("change", changeColor);
+        blue.addEventListener("change", changeColor);
+
+    </script>
+
+</body>
+</html>

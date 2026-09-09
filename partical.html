@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GPT Astra // Cinematic 3D Particle Universe</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #010307;
+      cursor: default;
+    }
+
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 100vw x 100vh Pure Canvas Universe (Zero UI Elements) -->
+  <div id="canvas-container">
+    <canvas id="particle-canvas"></canvas>
+  </div>
+
+  <script>
+    /**
+     * GPT ASTRA - CINEMATIC 3D PARTICLE UNIVERSE ENGINE
+     * Zero-UI, Full-Screen 3D Particle Morphing System
+     */
+
+    // Configuration & Physics State
+    const CONFIG = {
+      particleCount: 3800,        // Dynamic particle count (auto-scales for mobile)
+      attractionStrength: 0.042,  // Spring constant
+      friction: 0.89,             // Velocity damping
+      turbulence: 1.0,            // Chaos noise factor
+      mouseForce: 1.0,            // Repulsion strength
+      mouseRadius: 180,           // Repulsion field radius
+      particleSizeScale: 1.0,     // Size multiplier
+      glowIntensity: 1.2,         // Bloom brightness
+      trailAlpha: 0.18,           // Motion trail clear alpha
+      cameraFOV: 550,             // 3D Perspective focal length
+      cameraZ: 620,               // Base camera distance
+      autoMorphInterval: 5500     // Morph timer (5.5s)
+    };
+
+    // GPT Astra Color Palette (Cyan-White, Electric Blue, Violet, Solar Gold & Core White)
+    const PALETTE = [
+      { h: 195, s: 95, l: 85 }, // Luminous Cyan-White
+      { h: 205, s: 90, l: 68 }, // Electric Blue
+      { h: 225, s: 95, l: 75 }, // Deep Violet Spark
+      { h: 38,  s: 95, l: 72 }, // Warm Solar Gold Accent
+      { h: 0,   s: 0,  l: 100 }  // Pure White Core
+    ];
+
+    // Master 10 Parametric 3D Geometries
+    const SHAPES = [
+      { id: 'galaxy',      generator: generateGalaxy },
+      { id: 'sphere',      generator: generateSphere },
+      { id: 'heart',       generator: generateHeart },
+      { id: 'merkaba',     generator: generateMerkaba },
+      { id: 'triangle',    generator: generateTriangle },
+      { id: 'infinity',    generator: generateInfinity },
+      { id: 'helix',       generator: generateDNA },
+      { id: 'saturn',      generator: generateSaturn },
+      { id: 'blob',        generator: generateBlob },
+      { id: 'tesseract',   generator: generateTesseract }
+    ];
+
+    // Global References
+    let canvas, ctx;
+    let particles = [];
+    let starfield = [];
+    let lastTime = performance.now();
+    let time = 0;
+    let autoMorphTimer = null;
+
+    // Opening Sequence Fade-In
+    let fadeInProgress = 0.0;
+
+    // Smooth Virtual Scroll & Morph Progress
+    let scrollProgress = 0.0;
+    let targetScrollProgress = 0.0;
+    let cachedShapePoints = [];
+
+    // Smooth Inertial 3D Camera Rotation
+    let rotX = 0, rotY = 0;
+    let targetRotX = 0, targetRotY = 0;
+
+    const mouse = {
+      x: -9999, y: -9999,
+      targetX: -9999, targetY: -9999,
+      shockwaveTime: 0, shockwaveRadius: 0,
+      shockwavePos: { x: 0, y: 0 }
+    };
+
+
+    // -------------------------------------------------------------
+    // 10 MATHEMATICAL 3D SHAPE GENERATORS
+    // -------------------------------------------------------------
+
+    // 1. Logarithmic Spiral Galaxy
+    function generateGalaxy(count, radius) {
+      const points = [], arms = 4;
+      for (let i = 0; i < count; i++) {
+        const distRatio = Math.pow(Math.random(), 1.6);
+        const r = distRatio * radius * 1.35;
+        const armAngle = ((i % arms) / arms) * Math.PI * 2;
+        const spiralAngle = r * 0.012;
+        const angle = armAngle + spiralAngle + (Math.random() - 0.5) * 0.35 * (1.2 - distRatio * 0.5);
+
+        points.push({
+          x: Math.cos(angle) * r,
+          y: Math.sin(angle) * r,
+          z: (Math.random() - 0.5) * (radius * 0.4) * Math.exp(-distRatio * 2.0)
+        });
+      }
+      return points;
+    }
+
+    // 2. 3D Sphere + Dual Counter-Rotating Orbital Rings
+    function generateSphere(count, radius) {
+      const points = [];
+      const goldenRatio = (1 + Math.sqrt(5)) / 2;
+      const sphereCount = Math.floor(count * 0.72);
+      const ringCount = count - sphereCount;
+
+      for (let i = 0; i < sphereCount; i++) {
+        const theta = 2 * Math.PI * i / goldenRatio;
+        const phi = Math.acos(1 - 2 * (i + 0.5) / sphereCount);
+        const r = radius * (0.75 + Math.random() * 0.25);
+        points.push({ x: r * Math.sin(phi) * Math.cos(theta), y: r * Math.sin(phi) * Math.sin(theta), z: r * Math.cos(phi) });
+      }
+
+      for (let i = 0; i < ringCount; i++) {
+        const angle = (i / ringCount) * Math.PI * 2;
+        const ringR = radius * 1.38 + (Math.random() - 0.5) * 20;
+        points.push(i % 2 === 0 ?
+          { x: Math.cos(angle) * ringR, y: Math.sin(angle) * ringR * 0.3, z: Math.sin(angle) * ringR * 0.8 } :
+          { x: Math.cos(angle) * ringR * 0.3, y: Math.sin(angle) * ringR, z: Math.cos(angle) * ringR * 0.8 }
+        );
+      }
+      return points;
+    }
+
+    // 3. Cardioid Heart (3D Parametric Heart)
+    function generateHeart(count, radius) {
+      const points = [], scale = radius / 17;
+      for (let i = 0; i < count; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const u = (Math.random() - 0.5) * Math.PI;
+        const hx = 16 * Math.pow(Math.sin(t), 3);
+        const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        const hz = Math.sin(u) * 7 * Math.max(0, 1 - Math.abs(hy) / 18);
+        const fill = 0.5 + 0.5 * Math.sqrt(Math.random());
+        points.push({ x: hx * scale * fill, y: hy * scale * fill, z: hz * scale * fill });
+      }
+      return points;
+    }
+
+    // 4. Sacred Merkaba (Star Tetrahedron)
+    function generateMerkaba(count, radius) {
+      const points = [], s = radius * 1.1;
+      const v1 = [{x:s,y:s,z:s}, {x:-s,y:-s,z:s}, {x:-s,y:s,z:-s}, {x:s,y:-s,z:-s}];
+      const v2 = [{x:-s,y:-s,z:-s}, {x:s,y:s,z:-s}, {x:s,y:-s,z:s}, {x:-s,y:s,z:s}];
+
+      for (let i = 0; i < count; i++) {
+        const group = (i % 2 === 0) ? v1 : v2;
+        const vA = group[Math.floor(Math.random() * 4)], vB = group[Math.floor(Math.random() * 4)];
+        const t = Math.random(), fill = Math.pow(Math.random(), 0.5);
+        points.push({ x: (vA.x + (vB.x - vA.x) * t) * fill, y: (vA.y + (vB.y - vA.y) * t) * fill, z: (vA.z + (vB.z - vA.z) * t) * fill });
+      }
+      return points;
+    }
+
+    // 5. Pyramid Prism
+    function generateTriangle(count, radius) {
+      const points = [];
+      const v0 = { x: 0, y: -radius * 1.1, z: 0 };
+      const v1 = { x: Math.cos(0) * radius * 1.1, y: radius * 0.7, z: Math.sin(0) * radius * 0.9 };
+      const v2 = { x: Math.cos((2*Math.PI)/3) * radius * 1.1, y: radius * 0.7, z: Math.sin((2*Math.PI)/3) * radius * 0.9 };
+      const v3 = { x: Math.cos((4*Math.PI)/3) * radius * 1.1, y: radius * 0.7, z: Math.sin((4*Math.PI)/3) * radius * 0.9 };
+      const faces = [[v0, v1, v2], [v0, v2, v3], [v0, v3, v1], [v1, v2, v3]];
+
+      for (let i = 0; i < count; i++) {
+        const face = faces[Math.floor(Math.random() * faces.length)];
+        let r1 = Math.random(), r2 = Math.random();
+        if (r1 + r2 > 1) { r1 = 1 - r1; r2 = 1 - r2; }
+        const r3 = 1 - r1 - r2;
+        points.push({
+          x: r1 * face[0].x + r2 * face[1].x + r3 * face[2].x + (Math.random() - 0.5) * 8,
+          y: r1 * face[0].y + r2 * face[1].y + r3 * face[2].y + (Math.random() - 0.5) * 8,
+          z: r1 * face[0].z + r2 * face[1].z + r3 * face[2].z + (Math.random() - 0.5) * 8
+        });
+      }
+      return points;
+    }
+
+    // 6. Bernoulli Lemniscate Ribbon
+    function generateInfinity(count, radius) {
+      const points = [], scale = radius * 1.35;
+      for (let i = 0; i < count; i++) {
+        const t = (i / count) * Math.PI * 2;
+        const denom = 1 + Math.sin(t) * Math.sin(t);
+        const bx = (scale * Math.cos(t)) / denom, by = (scale * Math.sin(t) * Math.cos(t)) / denom;
+        const twist = t * 2, w = (Math.random() - 0.5) * 35;
+        points.push({ x: bx + Math.cos(twist) * w * 0.3, y: by + Math.sin(twist) * w * 0.3, z: Math.sin(2 * t) * (radius * 0.45) + w });
+      }
+      return points;
+    }
+
+    // 7. DNA Double Helix
+    function generateDNA(count, radius) {
+      const points = [], height = radius * 2.8, strandR = radius * 0.65, turns = 3.5;
+      for (let i = 0; i < count; i++) {
+        const progress = i / count, y = (progress - 0.5) * height, angle = progress * Math.PI * 2 * turns;
+        if (i % 7 === 0) {
+          const rungT = Math.random(), x1 = Math.cos(angle) * strandR, z1 = Math.sin(angle) * strandR;
+          const x2 = Math.cos(angle + Math.PI) * strandR, z2 = Math.sin(angle + Math.PI) * strandR;
+          points.push({ x: x1 + (x2 - x1) * rungT, y, z: z1 + (z2 - z1) * rungT });
+        } else {
+          const isStrandA = (i % 2 === 0), strandAngle = isStrandA ? angle : angle + Math.PI, jitter = (Math.random() - 0.5) * 12;
+          points.push({ x: Math.cos(strandAngle) * strandR + jitter, y: y + jitter, z: Math.sin(strandAngle) * strandR + jitter });
+        }
+      }
+      return points;
+    }
+
+    // 8. Saturn Planet & Accretion Rings
+    function generateSaturn(count, radius) {
+      const points = [], planetCount = Math.floor(count * 0.35), ringCount = count - planetCount, goldenRatio = (1 + Math.sqrt(5)) / 2;
+      for (let i = 0; i < planetCount; i++) {
+        const theta = 2 * Math.PI * i / goldenRatio, phi = Math.acos(1 - 2 * (i + 0.5) / planetCount);
+        const r = radius * 0.5 * Math.cbrt(Math.random());
+        points.push({ x: r * Math.sin(phi) * Math.cos(theta), y: r * Math.sin(phi) * Math.sin(theta), z: r * Math.cos(phi) });
+      }
+      for (let i = 0; i < ringCount; i++) {
+        const angle = Math.random() * Math.PI * 2, ringR = radius * (0.75 + Math.random() * 0.8), tilt = Math.PI / 6;
+        const rx = Math.cos(angle) * ringR, ry = (Math.random() - 0.5) * 8, rz = Math.sin(angle) * ringR;
+        points.push({ x: rx, y: ry * Math.cos(tilt) - rz * Math.sin(tilt), z: ry * Math.sin(tilt) + rz * Math.cos(tilt) });
+      }
+      return points;
+    }
+
+    // 9. Organic Fluid Blob
+    function generateBlob(count, radius) {
+      const points = [], goldenRatio = (1 + Math.sqrt(5)) / 2;
+      for (let i = 0; i < count; i++) {
+        const theta = 2 * Math.PI * i / goldenRatio, phi = Math.acos(1 - 2 * (i + 0.5) / count);
+        const harmonic = Math.sin(4 * theta) * Math.cos(3 * phi) * 0.25 + Math.cos(6 * theta) * 0.18;
+        const r = radius * (0.85 + harmonic);
+        points.push({ x: r * Math.sin(phi) * Math.cos(theta), y: r * Math.sin(phi) * Math.sin(theta), z: r * Math.cos(phi) });
+      }
+      return points;
+    }
+
+    // 10. 4D Tesseract Hypercube Projection
+    function generateTesseract(count, radius) {
+      const points = [], s = radius * 0.85, innerScale = 0.48;
+      const outerCube = [{x:-s,y:-s,z:-s},{x:s,y:-s,z:-s},{x:s,y:s,z:-s},{x:-s,y:s,z:-s},{x:-s,y:-s,z:s},{x:s,y:-s,z:s},{x:s,y:s,z:s},{x:-s,y:s,z:s}];
+      const innerCube = outerCube.map(v => ({ x: v.x * innerScale, y: v.y * innerScale, z: v.z * innerScale }));
+      for (let i = 0; i < count; i++) {
+        const vertices = Math.random() > 0.4 ? outerCube : innerCube;
+        const vA = vertices[Math.floor(Math.random() * vertices.length)], vB = vertices[Math.floor(Math.random() * vertices.length)];
+        const t = Math.random();
+        points.push({ x: vA.x + (vB.x - vA.x) * t + (Math.random() - 0.5) * 6, y: vA.y + (vB.y - vA.y) * t + (Math.random() - 0.5) * 6, z: vA.z + (vB.z - vA.z) * t + (Math.random() - 0.5) * 6 });
+      }
+      return points;
+    }
+
+
+    // -------------------------------------------------------------
+    // PARTICLE & STAR ENGINE CLASSES
+    // -------------------------------------------------------------
+
+    class Star {
+      constructor(w, h) { this.reset(w, h, true); }
+      reset(w, h, initial = false) {
+        this.x = (Math.random() - 0.5) * w * 2.2;
+        this.y = (Math.random() - 0.5) * h * 2.2;
+        this.z = initial ? Math.random() * 1000 : 1000;
+        this.size = Math.random() * 1.2 + 0.2;
+        this.baseAlpha = Math.random() * 0.5 + 0.15;
+        this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+        this.twinklePhase = Math.random() * Math.PI * 2;
+      }
+      update(dt) {
+        this.z -= dt * 35;
+        this.twinklePhase += this.twinkleSpeed;
+        if (this.z <= 1) this.z = 1000;
+      }
+      draw(ctx, width, height, fov) {
+        const scale = fov / this.z;
+        const px = this.x * scale + width / 2;
+        const py = this.y * scale + height / 2;
+        if (px >= 0 && px <= width && py >= 0 && py <= height) {
+          const alpha = this.baseAlpha * (0.6 + 0.4 * Math.sin(this.twinklePhase)) * (1 - this.z / 1000) * fadeInProgress;
+          ctx.fillStyle = `rgba(224, 242, 254, ${alpha})`;
+          ctx.beginPath();
+          ctx.arc(px, py, this.size * Math.max(0.4, scale), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    class Particle {
+      constructor(x, y, z, colorIndex) {
+        this.x = x; this.y = y; this.z = z;
+        this.targetX = x; this.targetY = y; this.targetZ = z;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.vz = (Math.random() - 0.5) * 2;
+        this.colorIndex = colorIndex;
+        this.baseSize = Math.random() * 1.8 + 1.1;
+        this.isBright = Math.random() > 0.82;
+        if (this.isBright) this.baseSize *= 1.6;
+        this.noiseOffset = Math.random() * 1000;
+      }
+
+      setTarget(tx, ty, tz) {
+        this.targetX = tx; this.targetY = ty; this.targetZ = tz;
+      }
+
+      update(dt, time, width, height) {
+        const dx = this.targetX - this.x;
+        const dy = this.targetY - this.y;
+        const dz = this.targetZ - this.z;
+
+        const k = CONFIG.attractionStrength;
+        this.vx += dx * k; this.vy += dy * k; this.vz += dz * k;
+
+        if (CONFIG.turbulence > 0.01) {
+          const tScale = 0.008;
+          this.vx += Math.sin(this.y * tScale + time * 1.5 + this.noiseOffset) * CONFIG.turbulence * 0.38;
+          this.vy += Math.cos(this.x * tScale + time * 1.5 + this.noiseOffset) * CONFIG.turbulence * 0.38;
+          this.vz += Math.sin(this.z * tScale + time * 1.5) * CONFIG.turbulence * 0.38;
+        }
+
+        // Non-Aggressive Mouse Repulsion
+        if (mouse.x > 0 && mouse.y > 0 && CONFIG.mouseForce > 0.01) {
+          const proj = this.getScreenProjection(width, height);
+          const mdx = proj.px - mouse.x, mdy = proj.py - mouse.y;
+          const distSq = mdx * mdx + mdy * mdy;
+          const mRadius = CONFIG.mouseRadius * CONFIG.mouseForce;
+
+          if (distSq < mRadius * mRadius && distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const force = ((mRadius - dist) / mRadius) * 11.0 * CONFIG.mouseForce;
+            this.vx += (mdx / dist) * force;
+            this.vy += (mdy / dist) * force;
+            this.vz += (Math.random() - 0.5) * force;
+          }
+        }
+
+        // Click Shockwave Burst
+        if (mouse.shockwaveTime > 0) {
+          const proj = this.getScreenProjection(width, height);
+          const sdx = proj.px - mouse.shockwavePos.x, sdy = proj.py - mouse.shockwavePos.y;
+          const sDist = Math.sqrt(sdx * sdx + sdy * sdy);
+          const ringDiff = Math.abs(sDist - mouse.shockwaveRadius);
+
+          if (ringDiff < 45) {
+            const shockForce = (1 - ringDiff / 45) * 28.0;
+            const angle = Math.atan2(sdy, sdx);
+            this.vx += Math.cos(angle) * shockForce;
+            this.vy += Math.sin(angle) * shockForce;
+            this.vz += (Math.random() - 0.5) * shockForce;
+          }
+        }
+
+        this.vx *= CONFIG.friction;
+        this.vy *= CONFIG.friction;
+        this.vz *= CONFIG.friction;
+
+        this.x += this.vx; this.y += this.vy; this.z += this.vz;
+      }
+
+      getScreenProjection(width, height) {
+        const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+        const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+
+        let x1 = this.x * cosY + this.z * sinY, y1 = this.y, z1 = -this.x * sinY + this.z * cosY;
+        let x2 = x1, y2 = y1 * cosX - z1 * sinX, z2 = y1 * sinX + z1 * cosX;
+
+        const cameraZ = CONFIG.cameraZ, fov = CONFIG.cameraFOV;
+        const scale = fov / (fov + z2 + cameraZ);
+
+        return { px: x2 * scale + width / 2, py: y2 * scale + height / 2, scale, zDepth: z2 };
+      }
+
+      draw(ctx, width, height) {
+        const proj = this.getScreenProjection(width, height);
+        const scale = proj.scale;
+        if (proj.px < -30 || proj.px > width + 30 || proj.py < -30 || proj.py > height + 30) return;
+
+        // Speed-based dynamic brightness boost
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy + this.vz * this.vz);
+        const speedBoost = Math.min(22, speed * 2.2);
+
+        const size = Math.max(0.3, this.baseSize * scale * CONFIG.particleSizeScale);
+        const alpha = Math.min(1.0, Math.max(0.15, (scale * scale) * 0.9)) * fadeInProgress;
+        const paletteColor = PALETTE[this.colorIndex % PALETTE.length];
+        
+        ctx.fillStyle = `hsla(${paletteColor.h}, ${paletteColor.s}%, ${Math.min(100, paletteColor.l + speedBoost)}%, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(proj.px, proj.py, size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (this.isBright && CONFIG.glowIntensity > 0.1) {
+          const glowSize = size * 3.5 * CONFIG.glowIntensity;
+          ctx.fillStyle = `hsla(${paletteColor.h}, ${paletteColor.s}%, ${paletteColor.l}%, ${alpha * 0.25 * CONFIG.glowIntensity})`;
+          ctx.beginPath();
+          ctx.arc(proj.px, proj.py, glowSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+
+    // -------------------------------------------------------------
+    // INITIALIZATION & REAL-TIME SCROLL INTERPOLATION LOOP
+    // -------------------------------------------------------------
+
+    function initEngine() {
+      canvas = document.getElementById('particle-canvas');
+      ctx = canvas.getContext('2d', { alpha: false });
+
+      handleResize();
+      window.addEventListener('resize', handleResize);
+
+      // Adaptive Particle Count for Mobile / Desktop
+      if (window.innerWidth < 768) {
+        CONFIG.particleCount = 2000;
+      }
+
+      starfield = [];
+      for (let i = 0; i < 180; i++) starfield.push(new Star(canvas.width, canvas.height));
+
+      recomputeShapeCache(CONFIG.particleCount);
+      createParticleSystem(CONFIG.particleCount);
+      setupEventListeners();
+
+      resetAutoMorphTimer();
+
+      requestAnimationFrame(renderLoop);
+    }
+
+    function getSystemRadius() {
+      const minDim = Math.min(window.innerWidth, window.innerHeight);
+      return Math.min(350, Math.max(170, minDim * 0.33));
+    }
+
+    function recomputeShapeCache(count) {
+      const radius = getSystemRadius();
+      cachedShapePoints = SHAPES.map(s => s.generator(count, radius));
+    }
+
+    function createParticleSystem(count) {
+      const initialPoints = cachedShapePoints[0] || generateGalaxy(count, getSystemRadius());
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        const pt = initialPoints[i] || { x: 0, y: 0, z: 0 };
+        particles.push(new Particle(pt.x, pt.y, pt.z, i));
+      }
+    }
+
+    function resetAutoMorphTimer() {
+      if (autoMorphTimer) clearInterval(autoMorphTimer);
+      autoMorphTimer = setInterval(() => {
+        targetScrollProgress += 1.0;
+      }, CONFIG.autoMorphInterval);
+    }
+
+    function renderLoop(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+      time += dt;
+
+      // Opening Fade-in Progress
+      if (fadeInProgress < 1.0) {
+        fadeInProgress += dt * 0.6;
+        if (fadeInProgress > 1.0) fadeInProgress = 1.0;
+      }
+
+      // Smooth Continuous Scroll Lerp Progress
+      scrollProgress += (targetScrollProgress - scrollProgress) * 0.07;
+
+      const numShapes = SHAPES.length;
+      let normalizedProgress = (scrollProgress % numShapes + numShapes) % numShapes;
+      
+      const fromIndex = Math.floor(normalizedProgress);
+      const toIndex = (fromIndex + 1) % numShapes;
+      let rawT = normalizedProgress - fromIndex;
+      
+      // Smoothstep Cubic Easing
+      const morphT = rawT * rawT * (3 - 2 * rawT);
+
+      const pointsA = cachedShapePoints[fromIndex];
+      const pointsB = cachedShapePoints[toIndex];
+
+      if (pointsA && pointsB) {
+        for (let i = 0; i < particles.length; i++) {
+          const pA = pointsA[i] || pointsA[0];
+          const pB = pointsB[i] || pointsB[0];
+
+          const tx = pA.x + (pB.x - pA.x) * morphT;
+          const ty = pA.y + (pB.y - pA.y) * morphT;
+          const tz = pA.z + (pB.z - pA.z) * morphT;
+
+          particles[i].setTarget(tx, ty, tz);
+        }
+      }
+
+      // Subtle Camera Orbit Inertia (Mouse Driven)
+      targetRotY += 0.003;
+      rotX += (targetRotX - rotX) * 0.05;
+      rotY += (targetRotY - rotY) * 0.05;
+
+      // Mouse Target Smoothing
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+
+      // Shockwave Blast Progress
+      if (mouse.shockwaveTime > 0) {
+        mouse.shockwaveRadius += dt * 650;
+        mouse.shockwaveTime -= dt;
+        if (mouse.shockwaveTime <= 0) mouse.shockwaveRadius = 0;
+      }
+
+      // Deep Atmospheric Clear Pass with Motion Trails
+      ctx.fillStyle = `rgba(1, 3, 7, ${CONFIG.trailAlpha})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.globalCompositeOperation = 'lighter';
+
+      // Draw Distant Micro Stars
+      for (let i = 0; i < starfield.length; i++) {
+        starfield[i].update(dt);
+        starfield[i].draw(ctx, canvas.width, canvas.height, CONFIG.cameraFOV);
+      }
+
+      // Render 3D Particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.update(dt, time, canvas.width, canvas.height);
+        p.draw(ctx, canvas.width, canvas.height);
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+
+      requestAnimationFrame(renderLoop);
+    }
+
+
+    // -------------------------------------------------------------
+    // EVENT LISTENERS & INTERACTION HANDLERS
+    // -------------------------------------------------------------
+
+    function setupEventListeners() {
+      // Subtle Camera Parallax Tilt & Mouse Position Tracking
+      window.addEventListener('mousemove', (e) => {
+        mouse.targetX = e.clientX;
+        mouse.targetY = e.clientY;
+
+        // Subtle Parallax Camera Rotation
+        targetRotY = ((e.clientX / window.innerWidth) - 0.5) * 0.45;
+        targetRotX = ((e.clientY / window.innerHeight) - 0.5) * -0.3;
+      });
+
+      window.addEventListener('mouseleave', () => {
+        mouse.targetX = -9999;
+        mouse.targetY = -9999;
+        targetRotX = 0;
+      });
+
+      // Subtle Click Shockwave Blast
+      window.addEventListener('click', (e) => {
+        mouse.shockwavePos = { x: e.clientX, y: e.clientY };
+        mouse.shockwaveRadius = 0;
+        mouse.shockwaveTime = 0.55;
+      });
+
+      // Smooth Virtual Scroll Scrubbing
+      window.addEventListener('wheel', (e) => {
+        targetScrollProgress += e.deltaY * 0.0012;
+        resetAutoMorphTimer();
+      }, { passive: true });
+
+      // Mobile Touch Support
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          mouse.targetX = e.touches[0].clientX;
+          mouse.targetY = e.touches[0].clientY;
+          targetRotY = ((e.touches[0].clientX / window.innerWidth) - 0.5) * 0.45;
+          targetRotX = ((e.touches[0].clientY / window.innerHeight) - 0.5) * -0.3;
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        mouse.targetX = -9999;
+        mouse.targetY = -9999;
+      });
+    }
+
+    function handleResize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      if (window.innerWidth < 768) {
+        CONFIG.particleCount = 2000;
+      } else {
+        CONFIG.particleCount = 3800;
+      }
+      recomputeShapeCache(CONFIG.particleCount);
+      createParticleSystem(CONFIG.particleCount);
+    }
+
+    // Launch Engine on DOM Load
+    window.addEventListener('DOMContentLoaded', initEngine);
+  </script>
+</body>
+</html>
